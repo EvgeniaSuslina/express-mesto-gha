@@ -46,7 +46,7 @@ module.exports.deleteCard = (req, res) => {
       if (err.name === 'NotFound') {
         res
           .status(NOT_FOUND)
-          .send({ message: 'Карточка с указанным _id не найдена.'});
+          .send({ message: 'Карточка с указанным _id не найдена.' });
       } else {
         res.status(SERVER_ERROR).send({ message: 'Ошибка по умолчанию' });
       }
@@ -71,9 +71,9 @@ module.exports.addlikeToCard = (req, res) => {
       } else if (err.name === 'NotFound') {
         res
           .status(NOT_FOUND)
-          .send({ message: 'Передан несуществующий _id карточки'});
+          .send({ message: 'Передан несуществующий _id карточки' });
       } else {
-        res.status(SERVER_ERROR).send({ message: 'Ошибка по умолчанию'});
+        res.status(SERVER_ERROR).send({ message: 'Ошибка по умолчанию' });
       }
     });
 };

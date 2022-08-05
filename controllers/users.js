@@ -59,7 +59,7 @@ module.exports.updateProfile = (req, res) => {
   User.findByIdAndUpdate(
     userId,
     { name, about },
-    { new: true, runValidators: true, upsert: false }
+    { new: true, runValidators: true, upsert: false },
   )
     .then((users) => res.status(SUCСESSFUL).send(users))
     .catch((err) => {
@@ -84,14 +84,14 @@ module.exports.updateAvatar = (req, res) => {
   User.findByIdAndUpdate(
     userId,
     { avatar },
-    { new: true, runValidators: true, upsert: false }
+    { new: true, runValidators: true, upsert: false },
   )
     .then((users) => res.status(SUCСESSFUL).send(users))
     .catch((err) => {
       if (err.name === 'BadRequest') {
         res
           .status(BAD_REQUEST)
-          .send({ message: 'Переданы некорректные данные'});
+          .send({ message: 'Переданы некорректные данные' });
       } else if (err.name === 'NotFound') {
         res
           .status(NOT_FOUND)
