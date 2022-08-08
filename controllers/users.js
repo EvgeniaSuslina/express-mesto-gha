@@ -8,15 +8,9 @@ const {
 
 module.exports.getUsers = (req, res) => {
   User.find({})
-    .then((users) => res.status(SUCСESSFUL).send(users))
-    .catch((err) => {
-      if (err.name === 'BadRequest') {
-        res
-          .status(BAD_REQUEST)
-          .send({ message: 'Переданы некорректные данные' });
-      } else {
-        res.status(SERVER_ERROR).send({ message: 'Ошибка по умолчанию' });
-      }
+    .then((users) => res.send(users))
+    .catch(() => {
+      res.status(SERVER_ERROR).send({ message: 'Ошибка по умолчанию' });
     });
 };
 
@@ -24,6 +18,9 @@ module.exports.getUserById = (req, res) => {
   const { userId } = req.params;
 
   User.findById(userId)
+    .orFail(() => {
+      throw new Error('NotFound');
+    })
     .then((users) => res.status(SUCСESSFUL).send(users))
     .catch((err) => {
       if (err.name === 'NotFound') {
@@ -42,7 +39,7 @@ module.exports.createUser = (req, res) => {
   User.create({ name, about, avatar })
     .then((users) => res.status(SUCСESSFUL).send(users))
     .catch((err) => {
-      if (err.name === 'BadRequest') {
+      if (err.name === 'ValidationError') {
         res
           .status(BAD_REQUEST)
           .send({ message: 'Переданы некорректные данные' });
@@ -59,14 +56,17 @@ module.exports.updateProfile = (req, res) => {
   User.findByIdAndUpdate(
     userId,
     { name, about },
-    { new: true, runValidators: true, upsert: false },
+    { new: true, runValidators: true, upsert: false }
   )
+    .orFail(() => {
+      throw new Error('NotFound');
+    })
     .then((users) => res.status(SUCСESSFUL).send(users))
     .catch((err) => {
-      if (err.name === 'BadRequest') {
+      if (err.name === 'ValidationError') {
         res
           .status(BAD_REQUEST)
-          .send({ message: 'Переданы некорректные данные' });
+          .send({ message: 'Переданы некорректные данные'});
       } else if (err.name === 'NotFound') {
         res
           .status(NOT_FOUND)
@@ -84,11 +84,14 @@ module.exports.updateAvatar = (req, res) => {
   User.findByIdAndUpdate(
     userId,
     { avatar },
-    { new: true, runValidators: true, upsert: false },
+    { new: true, runValidators: true, upsert: false }
   )
+    .orFail(() => {
+      throw new Error('NotFound');
+    })
     .then((users) => res.status(SUCСESSFUL).send(users))
     .catch((err) => {
-      if (err.name === 'BadRequest') {
+      if (err.name === 'ValidationError') {
         res
           .status(BAD_REQUEST)
           .send({ message: 'Переданы некорректные данные' });

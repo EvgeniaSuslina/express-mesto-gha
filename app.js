@@ -3,6 +3,9 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const routesUsers = require('./routes/users');
 const routesCards = require('./routes/cards');
+const {
+  NOT_FOUND,
+} = require('../utils/errors');
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -19,6 +22,10 @@ app.use((req, res, next) => {
 
 app.use(routesUsers);
 app.use(routesCards);
+
+app.use((req, res) => {
+  res.status(NOT_FOUND).send({ message: 'Запрашиваемый роут не найден'});
+  });
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
