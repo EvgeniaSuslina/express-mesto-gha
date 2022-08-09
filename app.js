@@ -21,7 +21,7 @@ app.use(routesUsers);
 app.use(routesCards);
 
 app.use((req, res) => {
-  res.status(400).send({ message: 'Запрашиваемый роут не найден' });
+  res.status(404).send({ message: 'Запрашиваемый роут не найден' });
 });
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
