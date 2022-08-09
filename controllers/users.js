@@ -1,4 +1,3 @@
-const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 const {
   SUCСESSFUL,
@@ -59,7 +58,7 @@ module.exports.updateProfile = (req, res) => {
   User.findByIdAndUpdate(
     userId,
     { name, about },
-    { new: true, runValidators: true, upsert: false }
+    { new: true, runValidators: true, upsert: false },
   )
     .orFail(() => {
       throw new Error('NotFound');
@@ -87,7 +86,7 @@ module.exports.updateAvatar = (req, res) => {
   User.findByIdAndUpdate(
     userId,
     { avatar },
-    { new: true, runValidators: true, upsert: false }
+    { new: true, runValidators: true, upsert: false },
   )
     .orFail(() => {
       throw new Error('NotFound');

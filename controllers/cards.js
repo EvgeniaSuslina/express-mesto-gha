@@ -59,7 +59,7 @@ module.exports.addlikeToCard = (req, res) => {
   Card.findByIdAndUpdate(
     cardId,
     { $addToSet: { likes: userId } },
-    { new: true }
+    { new: true },
   )
     .orFail(() => {
       throw new Error('NotFound');
