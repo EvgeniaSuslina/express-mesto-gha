@@ -10,8 +10,8 @@ module.exports.getCards = (req, res) => {
   Card.find({})
     .then((cards) => res.status(SUCСESSFUL).send(cards))
     .catch(() => {
-        res.status(SERVER_ERROR).send({ message: 'Ошибка по умолчанию' });
-      });
+      res.status(SERVER_ERROR).send({ message: 'Ошибка по умолчанию' });
+    });
 };
 
 module.exports.createCard = (req, res) => {
@@ -36,15 +36,13 @@ module.exports.deleteCard = (req, res) => {
 
   Card.findByIdAndRemove(cardId)
     .orFail(() => {
-    throw new Error('NotFound');
+      throw new Error('NotFound');
     })
     .then((cards) => res.status(SUCСESSFUL).send(cards))
     .catch((err) => {
-      if(err.name === 'CastError'){
-        res
-        .status(BAD_REQUEST)
-        .send({ message: 'Передан некорректный id' })
-      } else if (err.name === 'NotFound') {
+      if (err.name === 'CastError') {
+        res.status(BAD_REQUEST).send({ message: 'Невалидный id' });
+      } else if (err.message === 'NotFound') {
         res
           .status(NOT_FOUND)
           .send({ message: 'Карточка с указанным _id не найдена.' });
@@ -61,18 +59,16 @@ module.exports.addlikeToCard = (req, res) => {
   Card.findByIdAndUpdate(
     cardId,
     { $addToSet: { likes: userId } },
-    { new: true },
+    { new: true }
   )
     .orFail(() => {
-    throw new Error('NotFound');
+      throw new Error('NotFound');
     })
     .then((cards) => res.status(SUCСESSFUL).send(cards))
     .catch((err) => {
-      if(err.name === 'CastError'){
-        res
-        .status(BAD_REQUEST)
-        .send({ message: 'Передан некорректный id' })
-      } else if (err.name === 'NotFound') {
+      if (err.name === 'CastError') {
+        res.status(BAD_REQUEST).send({ message: 'Передан некорректный id' });
+      } else if (err.message === 'NotFound') {
         res
           .status(NOT_FOUND)
           .send({ message: 'Передан несуществующий _id карточки' });
@@ -88,15 +84,13 @@ module.exports.deleteLikeFromCard = (req, res) => {
 
   Card.findByIdAndUpdate(cardId, { $pull: { likes: userId } }, { new: true })
     .orFail(() => {
-    throw new Error('NotFound');
+      throw new Error('NotFound');
     })
     .then((cards) => res.status(SUCСESSFUL).send(cards))
     .catch((err) => {
-      if(err.name === 'CastError'){
-        res
-        .status(BAD_REQUEST)
-        .send({ message: 'Передан некорректный id' })
-      }else if (err.name === 'NotFound') {
+      if (err.name === 'CastError') {
+        res.status(BAD_REQUEST).send({ message: 'Передан некорректный id' });
+      } else if (err.message === 'NotFound') {
         res
           .status(NOT_FOUND)
           .send({ message: 'Передан несуществующий _id карточки' });

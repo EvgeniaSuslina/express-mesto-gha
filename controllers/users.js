@@ -1,3 +1,4 @@
+const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 const {
   SUCСESSFUL,
@@ -23,7 +24,9 @@ module.exports.getUserById = (req, res) => {
     })
     .then((users) => res.status(SUCСESSFUL).send(users))
     .catch((err) => {
-      if (err.name === 'NotFound') {
+      if (err.name === 'CastError') {
+        res.status(BAD_REQUEST).send({ message: 'Невалидный id' });
+      } else if (err.message === 'NotFound') {
         res
           .status(NOT_FOUND)
           .send({ message: 'Пользователь по указанному _id не найден.' });
@@ -66,8 +69,8 @@ module.exports.updateProfile = (req, res) => {
       if (err.name === 'ValidationError') {
         res
           .status(BAD_REQUEST)
-          .send({ message: 'Переданы некорректные данные'});
-      } else if (err.name === 'NotFound') {
+          .send({ message: 'Переданы некорректные данные' });
+      } else if (err.message === 'NotFound') {
         res
           .status(NOT_FOUND)
           .send({ message: 'Пользователь по указанному _id не найден.' });
@@ -95,7 +98,7 @@ module.exports.updateAvatar = (req, res) => {
         res
           .status(BAD_REQUEST)
           .send({ message: 'Переданы некорректные данные' });
-      } else if (err.name === 'NotFound') {
+      } else if (err.message === 'NotFound') {
         res
           .status(NOT_FOUND)
           .send({ message: 'Пользователь по указанному _id не найден.' });
