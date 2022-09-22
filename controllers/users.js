@@ -39,7 +39,6 @@ module.exports.createUser = (req, res, next) => {
   bcrypt
     .hash(password, 10)
     .then((hash) =>
-
       User.create({
         name,
         about,
@@ -47,7 +46,7 @@ module.exports.createUser = (req, res, next) => {
         email,
         password: hash,
       }),
-    )
+  )
     .then((user) => res.status(200).send({
         email: user.email,
         name: user.name,
@@ -55,8 +54,8 @@ module.exports.createUser = (req, res, next) => {
         avatar: user.avatar,
         _id: user._id,
       }),
-  )
-    .catch((err) => {
+   )
+   .catch((err) => {
       if (err.code === 11000) {
         next(new ConflictError('Почта уже существует'));
       } else if (err.name === 'ValidationError') {
@@ -137,9 +136,9 @@ module.exports.login = (req, res, next) => {
 
 module.exports.getCurrentUserInfo = (req, res, next) => {
   const userId = req.user._id;
-  User.findOne({_id: userId})
+  User.findOne( {_id: userId} )
     .then((user) => {
-      if (user){
+      if (user) {
         res.send({ data: user });
       } else {
         next(new NotFoundError('Пользователь по указанному _id не найден.'));
