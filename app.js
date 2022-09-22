@@ -35,13 +35,12 @@ app.post('/signup', celebrate({
     email: Joi.string().email().required(),
     password: Joi.string().required(),
   }),
-}),  createUser);
+}), createUser);
 
 app.use(auth);
 
 app.use(routesUsers);
 app.use(routesCards);
-
 
 app.use((req, res) => {
   res.status(404).send({ message: 'Запрашиваемый роут не найден' });
