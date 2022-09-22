@@ -2,6 +2,8 @@ const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
 
+const UnauthorizedError = require('../utils/errors/unauthorized');
+
 const userSchema = new mongoose.Schema(
   {
     name: {
@@ -31,8 +33,8 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
       select: false,
-      minlength: 8
-    }
+      minlength: 8,
+    },
   },
   { versionKey: false },
 );
