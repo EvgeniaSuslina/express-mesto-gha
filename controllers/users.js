@@ -38,24 +38,23 @@ module.exports.createUser = (req, res, next) => {
   } = req.body;
   bcrypt
     .hash(password, 10)
-    .then((hash) =>
-      User.create({
-        name,
-        about,
-        avatar,
-        email,
-        password: hash,
-      }),
-  )
+    .then((hash) => User.create({
+      name,
+      about,
+      avatar,
+      email,
+      password: hash,
+    }),
+    )
     .then((user) => res.status(200).send({
-        email: user.email,
-        name: user.name,
-        about: user.about,
-        avatar: user.avatar,
-        _id: user._id,
-      }),
-   )
-   .catch((err) => {
+      email: user.email,
+      name: user.name,
+      about: user.about,
+      avatar: user.avatar,
+      _id: user._id,
+    }),
+    )
+    .catch((err) => {
       if (err.code === 11000) {
         next(new ConflictError('Почта уже существует'));
       } else if (err.name === 'ValidationError') {
@@ -136,7 +135,7 @@ module.exports.login = (req, res, next) => {
 
 module.exports.getCurrentUserInfo = (req, res, next) => {
   const userId = req.user._id;
-  User.findOne( {_id: userId} )
+  User.findOne({ _id: userId })
     .then((user) => {
       if (user) {
         res.send({ data: user });
