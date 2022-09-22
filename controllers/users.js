@@ -44,14 +44,14 @@ module.exports.createUser = (req, res, next) => {
       avatar,
       email,
       password: hash,
-    }),)
+    }))
     .then((user) => res.status(200).send({
       email: user.email,
       name: user.name,
       about: user.about,
       avatar: user.avatar,
       _id: user._id,
-    }),)
+    }))
     .catch((err) => {
       if (err.code === 11000) {
         next(new ConflictError('Почта уже существует'));
