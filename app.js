@@ -6,7 +6,7 @@ const cookieParser = require('cookie-parser');
 const auth = require('./middlewares/auth');
 const routesUsers = require('./routes/users');
 const routesCards = require('./routes/cards');
-const NotFoundError = require('../utils/errors/not_found');
+const NotFoundError = require('./utils/errors/not_found');
 const { createUser, login } = require('./controllers/users');
 
 const regexUrl = /^(http[s]:\/\/)?[a-zA-Z0-9\-._~:/?#[\]@!$&'()*+,;=]+(\.[a-zA-Z]{2,}([a-zA-Z0-9\-._~:/?#[\]@!$&'()*+,;=])*)/;
