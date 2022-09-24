@@ -13,21 +13,14 @@ const regexUrl = /^(http[s]:\/\/)?[a-zA-Z0-9\-._~:/?#[\]@!$&'()*+,;=]+(\.[a-zA-Z
 
 const app = express();
 
-app.use(cookieParser());
-
 const { PORT = 3000 } = process.env;
+
+app.use(cookieParser());
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-
-app.post('/signin', celebrate({
-  body: Joi.object().keys({
-    email: Joi.string().email().required(),
-    password: Joi.string().min(6).required(),
-  }),
-}), login);
 
 app.post('/signup', celebrate({
   body: Joi.object().keys({
@@ -38,6 +31,13 @@ app.post('/signup', celebrate({
     password: Joi.string().required(),
   }),
 }), createUser);
+
+app.post('/signin', celebrate({
+  body: Joi.object().keys({
+    email: Joi.string().email().required(),
+    password: Joi.string().min(6).required(),
+  }),
+}), login);
 
 app.use(auth);
 

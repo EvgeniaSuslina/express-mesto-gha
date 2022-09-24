@@ -1,5 +1,4 @@
 const jwt = require('jsonwebtoken');
-
 const UnauthorizedError = require('../utils/errors/unauthorized');
 
 module.exports = (req, res, next) => {
@@ -11,7 +10,6 @@ module.exports = (req, res, next) => {
   }
 
   const token = authorization.replace('Bearer ', '');
-
   let payload;
 
   try {

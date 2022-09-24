@@ -10,14 +10,6 @@ const {
 
 const regexUrl = /^(http[s]:\/\/)?[a-zA-Z0-9\-._~:/?#[\]@!$&'()*+,;=]+(\.[a-zA-Z]{2,}([a-zA-Z0-9\-._~:/?#[\]@!$&'()*+,;=])*)/;
 
-routesUsers.get('/', getUsers);
-
-routesUsers.get('/:userId', celebrate({
-  params: Joi.object().keys({
-    userId: Joi.string().length(24).required(),
-  }),
-}), getUserById);
-
 routesUsers.get('/me', getCurrentUserInfo);
 
 routesUsers.patch('/me', celebrate({
@@ -32,5 +24,13 @@ routesUsers.patch('/me/avatar', celebrate({
     avatar: Joi.string().required().pattern(regexUrl),
   }),
 }), updateAvatar);
+
+routesUsers.get('/:userId', celebrate({
+  params: Joi.object().keys({
+    userId: Joi.string().length(24).required(),
+  }),
+}), getUserById);
+
+routesUsers.get('/', getUsers);
 
 module.exports = routesUsers;

@@ -26,33 +26,33 @@ module.exports.createCard = (req, res, next) => {
 
 module.exports.deleteCard = (req, res, next) => {
   Card.findById(req.params.cardId)
-    .then((card)=> {
+    .then((card) => {
       if (card) {
         const cardOwner = card.owner.toString().replace('new ObjectId("', '');
         if (req.user._id === cardOwner) {
-          Crad.findByIdAndRemove(req.params.cardId)
-          .then((result) => {
-            res.send(result);
-          })
-          .catch((err) => {
-            if (err.name === 'CastError') {
-              next(new BadRequestError('Невалидный id'));
-            }
-          });
+          Card.findByIdAndRemove(req.params.cardId)
+            .then((result) => {
+              res.send(result);
+            })
+            .catch((err) => {
+              if (err.name === 'CastError') {
+                next(new BadRequestError('Невалидный id'));
+              }
+            });
+        } else {
+          next(new ForbiddenError('Отстутствуют права на удаление чужой карточки'));
+        }
       } else {
-        next (new ForbiddenError('Отстутствуют права на удаление чужой карточки'));
+        next(new NotFoundError('Карточка с указанным _id не найдена.'));
       }
-    } else {
-      next(new NotFoundError('Карточка с указанным _id не найдена.'));
-    }
-  })
-  .catch((err) => {
-    if (err.name === 'DocumentNotFoundError') {
-      next (new NotFoundError('Карточка с указанным _id не найдена.'));
-    } else {
-      next(err)
-    }
-  });
+    })
+    .catch((err) => {
+      if (err.name === 'DocumentNotFoundError') {
+        next(new NotFoundError('Карточка с указанным _id не найдена.'));
+      } else {
+        next(err);
+      }
+    });
 };
 
 module.exports.addlikeToCard = (req, res, next) => {
