@@ -45,7 +45,7 @@ app.use('/users', routesUsers);
 app.use('/cards', routesCards);
 
 app.use((req, res, next) => {
-  next(new NotFoundError('Запрашиваемые данные не найдены'))
+  next(new NotFoundError('Запрашиваемые данные не найдены'));
 });
 
 app.use(errors());
@@ -60,7 +60,6 @@ app.use((err, req, res, next) => {
   });
   next();
 });
-
 
 app.listen(PORT, () => {
   console.log('Сервер экспресс запущен');

@@ -14,7 +14,6 @@ module.exports.getUsers = (req, res, next) => {
 };
 
 module.exports.getUserById = (req, res, next) => {
-
   User.findById(req.params.userId)
     .orFail(() => {
       next(new NotFoundError('Пользователь не найден'));
@@ -71,7 +70,7 @@ module.exports.updateProfile = (req, res, next) => {
   User.findByIdAndUpdate(
     req.user._id,
     { name, about },
-    { new: true, runValidators: true},
+    { new: true, runValidators: true },
   )
     .then((user) => {
       if (user) {
@@ -98,13 +97,13 @@ module.exports.updateAvatar = (req, res, next) => {
     { avatar },
     { new: true, runValidators: true },
   )
-  .then((user) => {
-    if (user) {
-      res.send({ data: user });
-    } else {
-      next(new NotFoundError('Пользователь не найден.'));
-    }
-  })
+    .then((user) => {
+      if (user) {
+        res.send({ data: user });
+      } else {
+        next(new NotFoundError('Пользователь не найден.'));
+      }
+    })
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new BadRequestError('Переданы некорректные данные'));
