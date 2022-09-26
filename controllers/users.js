@@ -15,9 +15,6 @@ module.exports.getUsers = (req, res, next) => {
 
 module.exports.getUserById = (req, res, next) => {
   User.findById(req.params.userId)
-    .orFail(() => {
-      next(new NotFoundError('Пользователь не найден'));
-    })
     .then((result) => {
       if (result) {
         res.send(result);
