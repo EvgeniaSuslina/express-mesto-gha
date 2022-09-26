@@ -26,26 +26,26 @@ module.exports.createCard = (req, res, next) => {
 
 module.exports.deleteCard = (req, res, next) => {
   Card.findById(req.params.cardId)
-  .then((card) => {
-    if(!card) {
-      throw new NotFoundError('Карточка с указанным _id не найдена.');
-    }
-    if (!card.owner.equals(req.user._id)){
-      throw new ForbiddenError('Отстутствуют права на удаление чужой карточки')
-    }
+    .then((card) => {
+      if (!card) {
+        throw new NotFoundError('Карточка с указанным _id не найдена.');
+      }
+      if (!card.owner.equals(req.user._id)) {
+        throw new ForbiddenError('Отстутствуют права на удаление чужой карточки');
+      }
 
-    return Card.findByIdAndRemove(req.params.cardId)
-    .then((result) => {
-    res.send(result);
-    })
-    .catch((err) => {
-    if (err.name === 'CastError') {
-      next(new BadRequestError('Невалидный id'));
-    }
+      return Card.findByIdAndRemove(req.params.cardId)
+        .then((result) => {
+          res.send(result);
+        })
+        .catch((err) => {
+          if (err.name === 'CastError') {
+            next(new BadRequestError('Невалидный id'));
+          }
 
-    return  next(err);
-  });
-});
+          return next(err);
+        });
+    });
 };
 
 module.exports.addlikeToCard = (req, res, next) => {
