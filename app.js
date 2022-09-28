@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const { celebrate, Joi, errors } = require('celebrate');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+
 const auth = require('./middlewares/auth');
 const routesUsers = require('./routes/users');
 const routesCards = require('./routes/cards');
@@ -15,12 +16,11 @@ const app = express();
 
 const { PORT = 3000 } = process.env;
 
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
-
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
 
 app.post('/signup', celebrate({
   body: Joi.object().keys({
@@ -35,7 +35,7 @@ app.post('/signup', celebrate({
 app.post('/signin', celebrate({
   body: Joi.object().keys({
     email: Joi.string().email().required(),
-    password: Joi.string().min(6).required(),
+    password: Joi.string().required(),
   }),
 }), login);
 
