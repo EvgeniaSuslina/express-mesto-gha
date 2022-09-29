@@ -76,7 +76,7 @@ module.exports.deleteLikeFromCard = (req, res, next) => {
 
   Card.findByIdAndUpdate(cardId, { $pull: { likes: userId } }, { new: true })
     .orFail(() => {
-      throw new Error('NotFound');
+      throw new NotFoundError('Передан несуществующий _id карточки');
     })
     .then((cards) => res.send(cards))
     .catch((err) => {
