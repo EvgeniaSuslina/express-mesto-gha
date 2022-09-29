@@ -13,11 +13,11 @@ const auth = (req, res, next) => {
   try {
     payload = jwt.verify(token, NODE_ENV === 'production' ? JWT_SECRET : 'some-secret-key');
   } catch (err) {
-    return next(new UnauthorizedError('Необходима авторизация'));
+    next(new UnauthorizedError('Необходима авторизация'));
   }
 
   req.user = payload;
-  return next();
+  next();
 };
 
 module.exports = auth;
