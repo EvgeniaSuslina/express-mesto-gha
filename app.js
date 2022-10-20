@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const { celebrate, Joi, errors } = require('celebrate');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const cors = require('cors');
 
 const auth = require('./middlewares/auth');
 const routesUsers = require('./routes/users');
@@ -11,10 +12,12 @@ const NotFoundError = require('./utils/errors/not_found');
 const { createUser, login } = require('./controllers/users');
 const { requestLogger, errorLogger } = require('./middlewares/logger')
 const regexUrl = /^(http[s]:\/\/)?[a-zA-Z0-9\-._~:/?#[\]@!$&'()*+,;=]+(\.[a-zA-Z]{2,}([a-zA-Z0-9\-._~:/?#[\]@!$&'()*+,;=])*)/;
-
+const allowedCors = require('./utils/allowedcors');
 const app = express();
 
 const { PORT = 3000 } = process.env;
+
+app.use(cors(allowedCors));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
