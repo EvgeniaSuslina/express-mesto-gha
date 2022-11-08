@@ -7,9 +7,11 @@ const UnauthorizedError = require('../utils/errors/unauthorized');
 const NotFoundError = require('../utils/errors/not_found');
 const ConflictError = require('../utils/errors/conflict');
 
+const { NODE_ENV, JWT_SECRET } = process.env;
+
 module.exports.getUsers = (req, res, next) => {
   User.find({})
-    .then((users) => res.send(users))
+    .then((result) => res.send(result))
     .catch(next);
 };
 
@@ -25,25 +27,6 @@ module.exports.getUserById = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new BadRequestError('Введен невалидный id'));
-      } else {
-        next(err);
-      }
-    });
-};
-
-module.exports.getCurrentUserInfo = (req, res, next) => {
-  const userId = req.user._id;
-  User.findOne({ _id: userId })
-    .then((user) => {
-      if (user) {
-        res.send({ data: user });
-      } else {
-        next(new NotFoundError('Пользователь по указанному _id не найден.'));
-      }
-    })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        next(new BadRequestError('Переданы некорректные данные'));
       } else {
         next(err);
       }
@@ -136,9 +119,11 @@ module.exports.login = (req, res, next) => {
 
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, 'some-secret-key', {
-        expiresIn: '7d',
-      });
+      const token = jwt.sign(
+        { _id: user._id }, 
+        NODE_ENV === 'production' ? JWT_SECRET : 'some-secret-key',
+        { expiresIn: '7d' },
+      );
       res
         .cookie('jwt', token, {
           maxage: 3600000 * 24 * 7,
@@ -148,5 +133,24 @@ module.exports.login = (req, res, next) => {
     })
     .catch(() => {
       next(new UnauthorizedError('Почта или пароль введены неправильно'));
+    });
+};
+
+module.exports.getCurrentUserInfo = (req, res, next) => {
+  const userId = req.user._id;
+  User.findOne({ _id: userId })
+    .then((user) => {
+      if (user) {
+        res.send({ data: user });
+      } else {
+        next(new NotFoundError('Пользователь по указанному _id не найден.'));
+      }
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        next(new BadRequestError('Переданы некорректные данные'));
+      } else {
+        next(err);
+      }
     });
 };
