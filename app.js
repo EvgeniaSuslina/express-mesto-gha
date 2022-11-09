@@ -3,7 +3,6 @@ const express = require('express');
 const mongoose = require('mongoose');
 const { celebrate, Joi, errors } = require('celebrate');
 const bodyParser = require('body-parser');
-const cookieParser = require('cookie-parser');
 const cors = require('cors');
 
 const auth = require('./middlewares/auth');
@@ -13,20 +12,27 @@ const NotFoundError = require('./utils/errors/not_found');
 const { createUser, login } = require('./controllers/users');
 const { requestLogger, errorLogger } = require('./middlewares/logger')
 const regexUrl = /^(http[s]:\/\/)?[a-zA-Z0-9\-._~:/?#[\]@!$&'()*+,;=]+(\.[a-zA-Z]{2,}([a-zA-Z0-9\-._~:/?#[\]@!$&'()*+,;=])*)/;
-const allowedCors = require('./utils/allowedcors');
+
 const app = express();
 
 const { PORT = 3000 } = process.env;
 
-app.use(cors(allowedCors));
-
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(cookieParser());
-
 mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
 });
+
+app.listen(PORT, () => {
+  console.log('Сервер экспресс запущен');
+});
+
+app.use(cors({
+  origin: 'https://evgenias.mesto.nomoredomains.icu',
+  credentials: true,
+}));
+
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(requestLogger);
 
@@ -77,6 +83,3 @@ app.use((err, req, res, next) => {
   next();
 });
 
-app.listen(PORT, () => {
-  console.log('Сервер экспресс запущен');
-});

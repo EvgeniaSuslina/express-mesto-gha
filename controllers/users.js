@@ -37,31 +37,33 @@ module.exports.createUser = (req, res, next) => {
   const {
     name, about, avatar, email, password,
   } = req.body;
-  bcrypt
-    .hash(password, 10)
-    .then((hash) => User.create({
-      name,
-      about,
-      avatar,
-      email,
-      password: hash,
-    }))
-    .then((user) => res.status(200).send({
-      email: user.email,
-      name: user.name,
-      about: user.about,
-      avatar: user.avatar,
-      _id: user._id,
-    }))
-    .catch((err) => {
-      if (err.code === 11000) {
-        next(new ConflictError('Почта уже существует'));
-      } else if (err.name === 'ValidationError') {
-        next(new BadRequestError('Переданы некорректные данные'));
-      } else {
-        next(err);
+
+  User.find({ email })
+    .then((response) => {
+      if (response.length === 0) {
+        bcrypt.hash(password, 10)
+        .then((hash) => User.create({
+          name,
+          about,
+          avatar,
+          email,
+          password: hash,
+        }))
+        .then((user) => User.findOne({ _id: user._id }))
+        .then((user) => {
+          res.send(user);
+        })
+        .catch((err) => {
+          if (err.code === 11000) {
+            next(new ConflictError('Почта уже существует'));
+          } else if (err.name === 'ValidationError') {
+            next(new BadRequestError('Переданы некорректные данные'));
+          } else {
+            next(err);
+          }
+        });
       }
-    });
+    })    
 };
 
 module.exports.updateProfile = (req, res, next) => {
@@ -73,7 +75,7 @@ module.exports.updateProfile = (req, res, next) => {
   )
     .then((user) => {
       if (user) {
-        res.send({ data: user });
+        res.send( user );
       } else {
         next(new NotFoundError('Пользователь не найден.'));
       }
@@ -98,7 +100,7 @@ module.exports.updateAvatar = (req, res, next) => {
   )
     .then((user) => {
       if (user) {
-        res.send({ data: user });
+        res.send( user );
       } else {
         next(new NotFoundError('Пользователь не найден.'));
       }
@@ -124,12 +126,7 @@ module.exports.login = (req, res, next) => {
         NODE_ENV === 'production' ? JWT_SECRET : 'some-secret-key',
         { expiresIn: '7d' },
       );
-      res
-        .cookie('jwt', token, {
-          maxage: 3600000 * 24 * 7,
-          httpOnly: true,
-        })
-        .send({ message: 'Авторизация успешна' });
+      res.send({ token });
     })
     .catch(() => {
       next(new UnauthorizedError('Почта или пароль введены неправильно'));
@@ -141,7 +138,7 @@ module.exports.getCurrentUserInfo = (req, res, next) => {
   User.findOne({ _id: userId })
     .then((user) => {
       if (user) {
-        res.send({ data: user });
+        res.send(user);
       } else {
         next(new NotFoundError('Пользователь по указанному _id не найден.'));
       }
