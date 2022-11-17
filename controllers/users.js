@@ -2,9 +2,17 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 
+
 const BadRequestError = require('../utils/errors/bad_request');
 const NotFoundError = require('../utils/errors/not_found');
 const ConflictError = require('../utils/errors/conflict');
+
+const randomString = crypto
+  .randomBytes(16) // сгенерируем случайную последовательность 16 байт (128 бит)
+  .toString('hex'); // приведём её к строке
+
+console.log(randomString);
+
 
 const { NODE_ENV, JWT_SECRET } = process.env;
 
